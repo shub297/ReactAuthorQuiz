@@ -1,5 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
+import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import logo from './logo.svg';
 import './App.css';
@@ -70,16 +71,35 @@ function Footer() {
   </div>)
 }
 
-function ReactAuthorQuiz({turnData, highlight, onAnswerSelected, onContinue}) {
-  return (
-    <div className="container-fluid">
-      <Hero/>
-      <Turn {...turnData} highlight={highlight} onAnswerSelected={onAnswerSelected} />
-      <Continue show={highlight === 'correct'} onContinue={onContinue}/>
-      <p><Link to="/add">Add an author</Link></p>
-      <Footer/>
-    </div>
-  );
+function mapStateToProps(state) {
+  return {
+    turnData: state.turnData,
+    highlight: state.highlight
+  };
 }
+
+function mapDispatchToProps(dispatch) {
+  return{
+    onAnswerSelected: (answer) => {
+      dispatch({type: 'ANSWER_SELECTED', answer});
+    },
+    onContinue: () => {
+      dispatch({type: 'CONTINUE'});
+    }
+  };
+}
+
+const ReactAuthorQuiz = connect(mapStateToProps, mapDispatchToProps)(
+  function ReactAuthorQuiz({turnData, highlight, onAnswerSelected, onContinue}) {
+    return (
+      <div className="container-fluid">
+        <Hero/>
+        <Turn {...turnData} highlight={highlight} onAnswerSelected={onAnswerSelected} />
+        <Continue show={highlight === 'correct'} onContinue={onContinue}/>
+        <p><Link to="/add">Add an author</Link></p>
+        <Footer/>
+      </div>
+    );
+});
 
 export default ReactAuthorQuiz;
